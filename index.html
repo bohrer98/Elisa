@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Missão Nerd-Love: Elisa Edition 💜</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #1e1e2f;
+      color: #f5f5f5;
+      font-family: 'Press Start 2P', cursive;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .container {
+      padding: 2rem;
+    }
+    h1, h2, h3 {
+      color: #ff66c4;
+    }
+    .button, .option-btn {
+      margin: 1rem;
+      padding: 1rem 2rem;
+      background-color: #ff66c4;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 1rem;
+      text-decoration: none;
+      display: inline-block;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .button:hover, .option-btn:hover {
+      background-color: #e655b3;
+    }
+    .hidden {
+      display: none;
+    }
+    #summary {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: #2e2e4f;
+      border: 2px solid #ff66c4;
+      border-radius: 10px;
+      padding: 1rem;
+    }
+    #summary img {
+      width: 200px;
+      margin-top: 1rem;
+      border-radius: 10px;
+    }
+    #countdown {
+      margin-top: 1rem;
+      font-size: 1rem;
+      color: #ffd700;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="intro">
+    <h1>Missão Nerd-Love: Elisa Edition 💜</h1>
+    <p>Oi Elisa! Eu preparei esse convite nerd-romântico porque você é única: uma DJ nerd, linda, engraçada, fã de cultura pop e cheia de estilo 💫</p>
+    <p>Missão do dia: escolha seu combo ideal de jantar + rolê e vamos viver essa aventura juntos! 🕹️</p>
+    <button class="button" onclick="showSection('jantar')">Começar Missão</button>
+  </div>
+
+  <div class="container hidden" id="jantar">
+    <h2>🍽️ Escolha seu jantar</h2>
+    <button class="option-btn" onclick="selectOption('jantar', 'Polaroid Bistro (Rua Marechal Deodoro, 520)')">🍝 Polaroid Bistro</button>
+    <button class="option-btn" onclick="selectOption('jantar', 'La Mafia Trattoria (Av. Maripá, 1234)')">🍝 La Mafia Trattoria</button>
+    <button class="option-btn" onclick="selectOption('jantar', 'Torii Sushi e Temakeria (Av. Paraná, 789)')">🍣 Torii Sushi</button>
+    <button class="option-btn" onclick="selectOption('jantar', 'Restaurante A Família (Rua Ceará, 230)')">🍽️ Restaurante A Família</button>
+    <button class="option-btn" onclick="selectOption('jantar', 'Peixaria Pantanal (Av. Brasil, 1450)')">🐟 Peixaria Pantanal</button>
+    <button class="option-btn" onclick="selectOption('jantar', 'Gelato Santi (Av. Maripá, 500)')">🍦 Gelato Santi</button>
+  </div>
+
+  <div class="container hidden" id="role">
+    <h2>🌌 Escolha o rolê pós-janta</h2>
+    <button class="option-btn" onclick="selectOption('role', 'Fenner’s Pub (Rua São João, 900)')">🍻 Fenner’s Pub</button>
+    <button class="option-btn" onclick="selectOption('role', 'Comanche American Pub (Av. Maripá, 1577)')">🍔 Comanche American Pub</button>
+    <button class="option-btn" onclick="selectOption('role', 'Rolé Drink & Food Lounge (Av. Brasil, 320)')">🍸 Rolé Drink & Food Lounge</button>
+    <button class="option-btn" onclick="selectOption('role', 'Parque Ecológico Diva Paim Barth (Av. Presidente Vargas, 1000)')">🌳 Parque Ecológico Diva Paim Barth</button>
+    <button class="option-btn" onclick="selectOption('role', 'Shopping Panambi (Av. Maripá, 1333)')">🛍️ Shopping Panambi</button>
+  </div>
+
+  <div class="container hidden" id="data">
+    <h2>📅 Escolha a data do nosso encontro</h2>
+    <input type="date" id="dateInput" min="" />
+    <br />
+    <button class="button" onclick="saveDate()">Confirmar Data</button>
+  </div>
+
+  <div class="container hidden" id="resposta">
+    <h2>💌 Você topa sair comigo?</h2>
+    <button class="option-btn" onclick="aceita(true)">Sim 🥰</button>
+    <button class="option-btn" onclick="aceita(false)">Não 😢</button>
+    <p id="negacao" class="hidden">Nem pense nisso! Tenta de novo clicando no botão certo 😘</p>
+  </div>
+
+  <div class="container hidden" id="summary">
+    <h2>✨ Missão confirmada!</h2>
+    <p><strong>Jantar:</strong> <span id="resumoJantar"></span></p>
+    <p><strong>Rolê:</strong> <span id="resumoRole"></span></p>
+    <p><strong>Data:</strong> <span id="resumoData"></span></p>
+    <img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif" alt="fofo" />
+    <div id="countdown"></div>
+  </div>
+
+  <script>
+    const selections = {
+      jantar: '',
+      role: '',
+      data: ''
+    };
+
+    // Set minimum date to today for date input
+    const dateInput = document.getElementById('dateInput');
+    const todayStr = new Date().toISOString().split('T')[0];
+    dateInput.min = todayStr;
+
+    function showSection(id) {
+      document.querySelectorAll('.container').forEach(div => div.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function selectOption(tipo, valor) {
+      selections[tipo] = valor;
+      if (tipo === 'jantar') showSection('role');
+      else if (tipo === 'role') showSection('data');
+    }
+
+    function saveDate() {
+      const data = document.getElementById('dateInput').value;
+      if (!data) {
+        alert('Escolha uma data!');
+        return;
+      }
+      selections.data = data;
+      showSection('resposta');
+    }
+
+    function aceita(aceitou) {
+      if (!aceitou) {
+        document.getElementById('negacao').classList.remove('hidden');
+      } else {
+        document.getElementById('negacao').classList.add('hidden');
+        document.getElementById('resumoJantar').innerText = selections.jantar;
+        document.getElementById('resumoRole').innerText = selections.role;
+        document.getElementById('resumoData').innerText = selections.data;
+        showSection('summary');
+        iniciarContagem(selections.data);
+      }
+    }
+
+    function iniciarContagem(dataStr) {
+      const dataFinal = new Date(dataStr + "T00:00:00");
+      const countdownEl = document.getElementById('countdown');
+
+      function atualizarContagem() {
+        const agora = new Date();
+        const diff = dataFinal - agora;
+        if (diff <= 0) {
+          countdownEl.innerText = "É HOJE! 💖";
+          return;
+        }
+        const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutos = Math.floor((diff / (1000 * 60)) % 60);
+        countdownEl.innerText = `Faltam ${dias} dias, ${horas}h e ${minutos}min para nosso date! 🥹`;
+      }
+
+      atualizarContagem();
+      setInterval(atualizarContagem, 60000);
+    }
+  </script>
+</body>
+</html>
